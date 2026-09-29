@@ -8,48 +8,39 @@
   html, body { margin:0; padding:0; background:#0b0d10; color:#c8ced8;
                font:15px/1.45 "Segoe UI", system-ui, sans-serif;
                height:100%; }
-  body { position:relative; min-height:100vh; }
+  /* z-index:0 makes body a stacking context so the ::before image layer
+     below paints above body's own dark background instead of behind it. */
+  body { position:relative; z-index:0; min-height:100vh; }
+
+  /* Full-screen background image, kept fully visible on 16:9 screens (PS4/TV). */
   body::before { content:""; position:fixed; top:0; left:0; right:0; bottom:0;
-                 background-image:url('bomba.png'); background-repeat:no-repeat;
-                 background-position:center center; background-size:340px auto;
-                 z-index:-1; pointer-events:none; }
-  #wrap { padding:16px 18px; background:rgba(11,13,16,.82); border-radius:10px;
-          margin:12px; }
-  #state { font-size:22px; font-weight:700; margin:0 0 6px; }
-  #det { font-size:13px; color:#8b95a3; margin:0 0 4px; }
-  #det b { color:#c8ced8; font-weight:600; }
-  #cache { font-size:12px; color:#5c6672; margin:0 0 10px; min-height:14px; }
+                 background:#0b0d10 url('fond.png') no-repeat center center;
+                 background-size:cover; z-index:-2; pointer-events:none; }
+  /* Small status pill pinned to the bottom edge (floor of the image). */
+  #wrap { position:fixed; left:50%; bottom:14px; -webkit-transform:translateX(-50%);
+          transform:translateX(-50%); max-width:90%; text-align:center;
+          padding:6px 16px; border-radius:10px; background:rgba(12,15,20,.6);
+          border:1px solid rgba(255,255,255,.08); }
+  #state { font-size:15px; font-weight:700; margin:0; color:#e6ebf2; }
+  #det { font-size:12px; color:#9aa4b2; margin:2px 0 0; }
+  #det b { color:#e6ebf2; font-weight:600; }
+  #cache { font-size:11px; color:#6b7581; margin:1px 0 0; min-height:13px; }
   #cache.cacheok { color:#7fd0a0; }
-  .ok { color:#7fd0a0; } .bad { color:#d08a7f; } .warn { color:#d8c07f; }
-  #brand { text-align:center; padding:8px 10px; background:#0e1116;
-           border-bottom:1px solid #1e2732; }
-  #brand img { width:28px; height:28px; margin-right:8px; border-radius:50%;
-               vertical-align:middle; }
-  #brand b { font-size:15px; font-weight:700; letter-spacing:.14em;
-             color:#e6ebf2; vertical-align:middle; }
-  #phone { text-align:center; padding:10px; font-size:20px; font-weight:800;
-           letter-spacing:.03em; color:#7fd0a0; background:#0e1116;
-           border-bottom:1px solid #1e2732; }
-  #phone a { color:#7fd0a0; text-decoration:none; }
+  .ok { color:#7fd0a0 !important; } .bad { color:#e8907f !important; }
+  .warn { color:#f0c428 !important; }
+
+  /* Narrow / portrait screens: show the whole image. */
+  @media (max-width: 760px) {
+    body::before { background-size:contain; }
+  }
 </style>
 </head>
 <body>
-<div id="brand"><img src="bomba.png" alt="La Bomba Service logo" width="28" height="28"><b>La Bomba Service</b></div>
-<div id="phone">📞 <a href="tel:+21650103489">+216 50 103 489</a></div>
 <div id="wrap">
   <div id="state">detecting firmware...</div>
   <div id="det"></div>
   <div id="cache"></div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var brand = document.getElementById('brand');
-    if (brand) {
-        brand.innerHTML = '<img src="bomba.png" alt="La Bomba Service logo" width="28" height="28"><b>La Bomba Service</b>';
-    }
-});
-</script>
 
 <script>
 (function () {
